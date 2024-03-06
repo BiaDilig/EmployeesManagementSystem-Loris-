@@ -5,7 +5,7 @@
 package Connection;
 
 /**
- *
+ * idol
  * @author User
  */
 public class JDBConnection {
