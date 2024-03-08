@@ -11,9 +11,11 @@ public class SMTP {
         
         // Sender's email credentials
         String senderEmail ="employeemanagementsystemloris@gmail.com";
-        String senderPassword ="";
+        String senderPassword ="xaqv dzyy mxpy ytxh";
             
         // Recipient's email
+        
+        
         String recipientEmail = "jenpando31@gmail.com";
 
         // Generate OTP
