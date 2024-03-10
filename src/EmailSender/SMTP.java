@@ -4,20 +4,26 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import Login.Login;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
+
 
 public class SMTP {
-
-    public static void main(String[] args) {
+    
+    
+     public static void sendOTP(String recipientEmail){
+   // public static void main(String[] args) {
         
         // Sender's email credentials
         String senderEmail ="employeemanagementsystemloris@gmail.com";
         String senderPassword ="xaqv dzyy mxpy ytxh";
             
         // Recipient's email
-        
-        
-        String recipientEmail = "jenpando31@gmail.com";
-
+       
+       //String recipientEmail = "pagtalunan.aldreenfranz.lachica@gmail.com";
+          
         // Generate OTP
         int otp = generateOTP();
 

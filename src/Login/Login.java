@@ -9,31 +9,42 @@ package Login;
  * @author User
  */
 
+import Admin.Admin;
+import Employee.Employee;
 import Connection.JDBConnection;
 import EmailSender.SMTP;
 import java.sql.*;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
+
+
 
 public class Login extends javax.swing.JFrame {
-
+ 
     /**
      * Creates new form Login
      */
     
+  
     private static Connection conn = null;
-    private static PreparedStatement ps = null;
+    private static PreparedStatement pst = null;
     private static ResultSet rs = null;
     private static Statement st= null;
     
+    
     public Login() {
         initComponents();
-        
+       
         conn = JDBConnection.connectDB();
         
-       
-        
     }
-
+    
+   
+    
+     
+     
+     
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -73,12 +84,15 @@ public class Login extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(166, 166, 166)
+                .addGap(136, 136, 136)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(178, Short.MAX_VALUE))
+                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(32, 32, 32))
+                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(146, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -94,33 +108,58 @@ public class Login extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    
+    
+    
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         
         String email = txtEmail.getText();
         String password = txtPassword.getText();
-        String admin = "";
-        String adminpassword = "";           
-
-        if (email.equals(admin) || password.equals(adminpassword)){
-            
+        
+                
+        if (email.equals(email) || password.equals(password)){            
             // perform public static void Load()for admin 
-            
-            
-            
-        }else if (email.equals(null) || (password.equals(null))){
-            
-            
-            // perform public static void Load()for admin 
-
-            /*
-             add more conditional depending on the use for access 
-            
-                   
-            */
+                       
+            try{
+                 String sql = "SELECT * FROM Admin WHERE Email = ? AND Admin_Password = ?";
+                  pst = conn.prepareStatement(sql);
+                  pst.setString(1, email);
+                  pst.setString(2, password);
+                
+                 rs = pst.executeQuery();
+                 
+                  if (rs.next()) {
+                System.out.println("Admin login successful!");
+                // Call your method here to perform actions for the admin
+                // For example: Load();   
+                //  Load();
+                        
+                Admin adminDashboard = new Admin();
+                  adminDashboard.show();
+                  
+                  dispose();
+                  
+            } else {
+                System.out.println("Invalid admin credentials.");
+                    SMTP smtpClass = new SMTP();
+                    smtpClass.sendOTP(email);
+                  
+                  
+                
+            }                        
+            }catch(Exception e){
+               JOptionPane.showConfirmDialog(null, e);
+            }                         
+          
+       // }else if (){
+           
+                      
+         
         }else{
-            
+           
         }
       
         
@@ -174,7 +213,28 @@ public class Login extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JTextField txtEmail;
-    private javax.swing.JPasswordField txtPassword;
+    private static javax.swing.JTextField txtEmail;
+    private static javax.swing.JPasswordField txtPassword;
     // End of variables declaration//GEN-END:variables
+ 
+    
+    public static void Load() {
+         // this is temporary pls create the sql load method.
+      try{
+          String sql = "SELECT * FROM EMPLOYEE WHERE EMAIL='"+ txtEmail.getText()+"' AND PASSWORD= '"+txtPassword.getText()+"'";
+          st = conn.createStatement();
+          rs = st.executeQuery(sql);
+           while(rs.next()){
+               //create all the load
+           }
+          
+          
+      }catch(Exception e){
+          JOptionPane.showMessageDialog(null, e);
+      }
+               
+    }
+     
+
+ 
 }
