@@ -25,10 +25,10 @@ public class SMTP {
 
         
         Properties properties = new Properties();
-        properties.put("mail.smtp.host", "smtp.gmail.com"); // Gmail SMTP server
-        properties.put("mail.smtp.port", "587"); // Port
-        properties.put("mail.smtp.auth", "true"); // Enable authentication
-        properties.put("mail.smtp.starttls.enable", "true"); // Enable TLS
+        properties.put("mail.smtp.host", "smtp.gmail.com"); 
+        properties.put("mail.smtp.port", "587"); 
+        properties.put("mail.smtp.auth", "true"); 
+        properties.put("mail.smtp.starttls.enable", "true"); 
 
         
         Session session = Session.getInstance(properties, new Authenticator() {
