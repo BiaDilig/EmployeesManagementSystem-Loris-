@@ -115,12 +115,12 @@ public class Login extends javax.swing.JFrame {
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
+    
         String email = txtEmail.getText();
         String password = txtPassword.getText();
         
                 
-        if (email.equals(email) || password.equals(password)){            
+        if (email.equals(email) && password.equals(password)){            
             // perform public static void Load()for admin 
                        
             try{
@@ -142,24 +142,83 @@ public class Login extends javax.swing.JFrame {
                   
                   dispose();
                   
-            } else {
-                System.out.println("Invalid admin credentials.");
-                    SMTP smtpClass = new SMTP();
-                    smtpClass.sendOTP(email);
-                  
-                  
-                
-            }                        
-            }catch(Exception e){
-               JOptionPane.showConfirmDialog(null, e);
-            }                         
-          
-       // }else if (){
-           
+                 } else {
                       
+                //create sql 3 times attempt for otp trigger.
+                System.out.println("Invalid admin credentials.");
+                
+              
+                try{
+                  String sqlEmailSend = "UPDATE admin SET email_attempts = email_attempts + 1 WHERE email =?";  
+                  
+                  pst = conn.prepareStatement(sqlEmailSend);
+                              
+                
+                   pst.setString(1, email);
+                   pst.executeUpdate();
+                                   
+                }catch(SQLException e){
+                 JOptionPane.showMessageDialog(null, e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+                }  
+            }
+                  
+                                   
+           }catch(Exception e){
+               JOptionPane.showConfirmDialog(null, e);
+            } 
+            
+            // DELETE FROM HERE 
+            
+            // do the if else (if email attempts is =>3 proceed to funtction)
+            
          
+            
+            try{
+             String sqlEmailSelect = "SELECT Email_Attempts FROM admin WHERE email=? ";
+             
+             pst = conn.prepareStatement(sqlEmailSelect);
+             pst.setString(1,email);
+             rs = pst.executeQuery();
+             
+             
+              int emailAttempts  = 0;
+             if(rs.next()){
+                 emailAttempts = rs.getInt("Email_Attempts");
+             }
+                
+            
+             //send otp if >= 3 email attempts
+             if(emailAttempts >= 3){
+                 
+                 
+                 OTPREQUEST showOTPForm = new OTPREQUEST();
+                 showOTPForm.show();
+                 
+                 
+                // SMTP smtpClass = new SMTP();
+                //  smtpClass.sendOTP(email);
+             }   
+             
+             
+            
+                
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, e);
+            
+                
+            }
+            
+            
+            
+              
+            // if Email_attempts is equal to => 3 proceed to print otp
+       
+            //TO THERE
+            
+   
+            
         }else{
-           
+            //conditoion number 2
         }
       
         
