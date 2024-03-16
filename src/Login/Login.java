@@ -12,11 +12,10 @@ package Login;
 import Admin.Admin;
 import Employee.Employee;
 import Connection.JDBConnection;
-import EmailSender.SMTP;
 import java.sql.*;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-
+import EmailSender.SMTP;
 
 
 
@@ -84,26 +83,26 @@ public class Login extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(136, 136, 136)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 100, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(32, 32, 32))
-                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(146, Short.MAX_VALUE))
+                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(115, 115, 115))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(128, 128, 128)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(130, 130, 130)
+                .addGap(144, 144, 144)
                 .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(18, 18, 18)
                 .addComponent(jButton1)
-                .addContainerGap(147, Short.MAX_VALUE))
+                .addContainerGap(176, Short.MAX_VALUE))
         );
 
         pack();
@@ -114,112 +113,68 @@ public class Login extends javax.swing.JFrame {
     
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+                                       
+    String email = txtEmail.getText();
+    String password = txtPassword.getText();
+    int emailAttempts = 0;
     
-        String email = txtEmail.getText();
-        String password = txtPassword.getText();
-        
-                
-        if (email.equals(email) && password.equals(password)){            
-            // perform public static void Load()for admin 
-                       
-            try{
-                 String sql = "SELECT * FROM Admin WHERE Email = ? AND Admin_Password = ?";
-                  pst = conn.prepareStatement(sql);
-                  pst.setString(1, email);
-                  pst.setString(2, password);
-                
-                 rs = pst.executeQuery();
-                 
-                  if (rs.next()) {
-                System.out.println("Admin login successful!");
-                // Call your method here to perform actions for the admin
-                // For example: Load();   
-                //  Load();
-                        
-                Admin adminDashboard = new Admin();
-                  adminDashboard.show();
-                  
-                  dispose();
-                  
-                 } else {
-                      
-                //create sql 3 times attempt for otp trigger.
-                System.out.println("Invalid admin credentials.");
-                
-              
-                try{
-                  String sqlEmailSend = "UPDATE admin SET email_attempts = email_attempts + 1 WHERE email =?";  
-                  
-                  pst = conn.prepareStatement(sqlEmailSend);
-                              
-                
-                   pst.setString(1, email);
-                   pst.executeUpdate();
-                                   
-                }catch(SQLException e){
-                 JOptionPane.showMessageDialog(null, e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
-                }  
-            }
-                  
-                                   
-           }catch(Exception e){
-               JOptionPane.showConfirmDialog(null, e);
-            } 
-            
-            // DELETE FROM HERE 
-            
-            // do the if else (if email attempts is =>3 proceed to funtction)
-            
-         
-            
-            try{
-             String sqlEmailSelect = "SELECT Email_Attempts FROM admin WHERE email=? ";
-             
-             pst = conn.prepareStatement(sqlEmailSelect);
-             pst.setString(1,email);
-             rs = pst.executeQuery();
-             
-             
-              int emailAttempts  = 0;
-             if(rs.next()){
-                 emailAttempts = rs.getInt("Email_Attempts");
-             }
-                
-            
-             //send otp if >= 3 email attempts
-             if(emailAttempts >= 3){
-                 
-                 
-                 OTPREQUEST showOTPForm = new OTPREQUEST();
-                 showOTPForm.show();
-                 
-                 
-                // SMTP smtpClass = new SMTP();
-                //  smtpClass.sendOTP(email);
-             }   
-             
-             
-            
-                
-            }catch(Exception e){
-                JOptionPane.showMessageDialog(null, e);
-            
-                
-            }
-            
-            
-            
-              
-            // if Email_attempts is equal to => 3 proceed to print otp
-       
-            //TO THERE
-            
-   
-            
-        }else{
-            //conditoion number 2
+    try {
+        String sqlSelect = "SELECT Email_Attempts FROM admin WHERE email = ?";
+        pst = conn.prepareStatement(sqlSelect);
+        pst.setString(1, email);
+        rs = pst.executeQuery();
+
+        if (rs.next()) {
+            emailAttempts = rs.getInt("Email_Attempts");
         }
+
+        if (emailAttempts >= 3) {
+            
+            SMTP sendCode = new SMTP();
+            sendCode.sendOTP(email);
+            
+            OTPREQUEST showOTPForm = new OTPREQUEST();
+            showOTPForm.show();
+            dispose();
+        } else {
+            String sql = "SELECT * FROM Admin WHERE Email = ? AND Admin_Password = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, email);
+            pst.setString(2, password);
+            rs = pst.executeQuery();
+
+            if (rs.next()) {
+                System.out.println("Admin login successful!");
+                Admin adminDashboard = new Admin();
+                adminDashboard.show();
+                dispose();
+            } else {
+                System.out.println("Invalid admin credentials.");
+               
+                String sqlEmailUpdate = "UPDATE admin SET email_attempts = email_attempts + 1 WHERE email = ?";
+                pst = conn.prepareStatement(sqlEmailUpdate);
+                pst.setString(1, email);
+                pst.executeUpdate();
+            }
+        }
+        //Employee Condition 
+        
+        
+        
+        
+    } catch (SQLException e) {
+       
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Database error occurred.", "Error", JOptionPane.ERROR_MESSAGE);
+    } finally {
+       
+        try {
+            if (rs != null) rs.close();
+            if (pst != null) pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
       
         
         
@@ -278,7 +233,7 @@ public class Login extends javax.swing.JFrame {
  
     
     public static void Load() {
-         // this is temporary pls create the sql load method.
+        
       try{
           String sql = "SELECT * FROM EMPLOYEE WHERE EMAIL='"+ txtEmail.getText()+"' AND PASSWORD= '"+txtPassword.getText()+"'";
           st = conn.createStatement();

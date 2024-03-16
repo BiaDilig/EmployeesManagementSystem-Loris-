@@ -21,7 +21,7 @@ public class JDBConnection {
                 conn = DriverManager.getConnection(DB_URL,USER,PASSWORD);
              
                 //Remove message if publish 
-                JOptionPane.showMessageDialog(null," DATABASE CONNECTED");
+              //  JOptionPane.showMessageDialog(null," DATABASE CONNECTED");
                 return conn;
                 
             // updated naa to remie ;>
